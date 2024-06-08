@@ -1,4 +1,7 @@
-use std::{fs::File, io::Read, path::Path, str::FromStr};
+use std::{f32, fs::File, io::Read, path::Path, str::FromStr};
+
+use bevy::{render::color::Color};
+use bevy::prelude::*;
 
 
 pub fn read_file(path: &Path) -> Vec<Atom> {
@@ -41,14 +44,19 @@ impl Atom {
   //pub fn distances(&self, atoms: &Vec<Atom>) -> Vec<Vec3> {
   pub fn distances(&self, atoms: &[Atom]) -> Vec<Vec3> {
        let distances = atoms.iter()
-           .map(|atom| 
-               Vec3::new(atom.x.expect(""), atom.y.expect(""), atom.z.expect("")) - 
-               Vec3::new(self.x.expect(""), self.y.expect(""), self.z.expect("")))
+           .map(|atom| Vec3::new(atom.x.expect(""), atom.y.expect(""), atom.z.expect("")) - 
+               Vec3::new(self.x.expect(""), self.y.expect(""), self.z.expect("")) )
            .collect::<Vec<Vec3>>();
       println!("distances in fun: {:?}", distances);
       distances 
    } 
 }
+
+//  .map(|atom|
+         //      vec![atom.x.expect("") - self.x.expect(""), 
+         //      atom.y.expect("") - self.y.expect(""),
+         //      atom.z.expect("") -self.z.expect("") ]
+         //      )
 
 #[derive(Debug)]
 enum Elements {
@@ -74,19 +82,19 @@ fn def_atom(element: Elements, position: [f32; 3]) -> Atom {
         Elements::H => Atom {
             element: Some("H".to_string()),
             atomic_number: Some(1),
-            color: WHITE,
+            color: Color::WHITE,
             ..Default::default()
         },
         Elements::C => Atom {
             element: Some("C".to_string()),
             atomic_number: Some(6),
-            color: BLACK,
+            color: Color::BLACK,
             ..Default::default()
         },
         Elements::O => Atom {
             element: Some("O".to_string()),
             atomic_number: Some(6),
-            color: RED,
+            color: Color::RED,
             ..Default::default()
         },
     };
