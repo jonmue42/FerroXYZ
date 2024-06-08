@@ -1,6 +1,5 @@
 use std::{fs::File, io::Read, path::Path, str::FromStr};
 
-use macroquad::{color::*, math::Vec3};
 
 pub fn read_file(path: &Path) -> Vec<Atom> {
     let display = path.display();
