@@ -1,25 +1,18 @@
-//mod hello;
-//mod camera_transform;
 mod xyz_parser;
-use core::f32;
-use std::{any::type_name_of_val, path::Path};
+use std::path::Path;
 
-//use std::vec;
-//use std::{f32::consts::PI, path::Path};
-//
 pub use xyz_parser::read_file;
-//pub use xyz_parser::Atom;
-//pub use hello::print_hello;
-//pub use camera_transform::camera_transform::transform_camera;
 
 
-use bevy::{prelude::*};
+use bevy::prelude::*;
 use bevy_panorbit_camera::{self, PanOrbitCamera, PanOrbitCameraPlugin};
+use bevy_inspector_egui::quick::WorldInspectorPlugin;
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         .add_plugins(PanOrbitCameraPlugin)
+        .add_plugins(WorldInspectorPlugin::new())
         .insert_resource(ClearColor(Color::FUCHSIA))
         .add_systems(Startup, setup)
         .run();
