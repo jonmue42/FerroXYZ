@@ -13,7 +13,7 @@ pub use xyz_parser::read_file;
 //pub use camera_transform::camera_transform::transform_camera;
 
 
-use bevy::{prelude::*, reflect::List};
+use bevy::{prelude::*};
 use bevy_panorbit_camera::{self, PanOrbitCamera, PanOrbitCameraPlugin};
 
 fn main() {
@@ -30,13 +30,13 @@ fn setup(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>
 ) {
-    let path = Path::new("H2O.xyz");
+    let path = Path::new("xyz_file.xyz");
     let atoms = read_file(&path);
 
     //draw atoms
     for atom in atoms.iter() {
         commands.spawn(PbrBundle {
-            mesh: meshes.add(Sphere::new(0.5).mesh()),
+            mesh: meshes.add(Sphere::new(0.2).mesh()),
             material: materials.add(atom.color),
             transform: Transform::from_xyz(atom.x.expect("Err"), atom.y.expect("Err"), atom.z.expect("Err")),
             ..default()
@@ -50,30 +50,18 @@ fn setup(
         .collect::<Vec<Vec<Vec3>>>();
 
     for (indx, distance) in distances.iter().enumerate() {
-        println!("Distance {:?}", distance);
-        let distance_vec =<Vec<Vec3> as FromReflect>::from_reflect(distance).unwrap();
-        for dis in distance_vec.iter() {
-            let dis = <Vec3 as FromReflect>::from_reflect(dis).unwrap();
-            if dis.length() < 2.0 {
-                println!("dis < 2: {:?}", dis);
+        distance.iter()
+            .for_each(|distance| if distance.length() < 2.0 {
                 commands.spawn(PbrBundle {
-                    mesh: meshes.add(Cylinder::new(0.1, 5.0).mesh()),
+                    mesh: meshes.add(Cylinder::new(0.05, distance.length())),
                     material: materials.add(Color::WHITE),
-                    transform: Transform { translation: Vec3::new(atoms[indx].x.expect("Err"), atoms[indx].y.expect("Err"), atoms[indx].z.expect("Err")), ..default() },
+                    transform: Transform::from_xyz(atoms[indx].x.expect("REASON") + distance.x/2.0, atoms[indx].y.expect("REASON") + distance.y/2.0, atoms[indx].z.expect("REASON") + distance.z/2.0)
+                        .with_rotation(Quat::from_rotation_arc(Vec3::new(0.0, 1.0, 0.0), distance.normalize())),
                     ..default()
                 });
-        
-
-            }
-
-        }
+            
+            })
     }
-
-       // distance_vec.iter()
-       //    .for_each(|distance_vec| if distance_vec.length() < 2.0 {
-       //        println!("distance: {:?}", distance_vec.length());
-       //    })
-
 
     //camera
     commands.spawn((Camera3dBundle {
